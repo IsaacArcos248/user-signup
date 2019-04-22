@@ -5,12 +5,12 @@ app = Flask(__name__)
 app.config['DEBUG'] = True      # displays runtime errors in the browser, too
 
 
-@app.route('/')
+@app.route('/register')
 def index():
     return render_template('user-signup.html', username = '', password = '', passver = '', email = '', 
         username_error = '', password_error = '', passver_error = '', email_error='') 
 
-@app.route('/', methods = ['POST'])
+@app.route('/register', methods = ['POST'])
 def validate_info():
 
     username = request.form['username'] 
@@ -46,12 +46,16 @@ def validate_info():
            passver_error = 'Your Password Must Match the Password Field !'
            passver = ''
 
-    if email == '%':
+    if len(email)>0:
         if len(email)< 3 or len(email)>20:
             email_error = "Your email must be between 3-20 characters in lenght!"
         else:
-            if email != "%@%" or email != "%.%":
+            if '.' not in email:
                 email_error = "Your email is missing a special character (@ or . )"
+            elif '@' not in email: 
+                email_error = "Your email is missing a special character (@ or . )"
+            else:
+                email_error=''
 
     if username_error or password_error or passver_error or email_error:
         return render_template('user-signup.html', username = username, password = password, passver = passver, email = email, 
